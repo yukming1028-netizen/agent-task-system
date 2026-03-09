@@ -37,7 +37,8 @@ export class DashboardService {
       role: user.role,
       isAvailable: user.isAvailable,
       currentTasks: user.currentTasks,
-      status: user.isAvailable && user.currentTasks < 5 ? 'available' : 'busy',
+      maxTasks: user.maxTasks || 5,
+      status: user.isAvailable && user.currentTasks < (user.maxTasks || 5) ? 'available' : 'busy',
     }));
 
     return {
@@ -89,7 +90,46 @@ export class DashboardService {
       role: user.role,
       isAvailable: user.isAvailable,
       currentTasks: user.currentTasks,
-      status: user.isAvailable && user.currentTasks < 5 ? 'available' : 'busy',
+      maxTasks: user.maxTasks || 5,
+      status: user.isAvailable && user.currentTasks < (user.maxTasks || 5) ? 'available' : 'busy',
     }));
+  }
+
+  /**
+   * Get detailed agent status with task breakdown
+   */
+  async getAgentDetailStatus(agentId: number) {
+    const user = await this.usersService.findById(agentId);
+    if (!user) {
+      throw new Error('Agent not found');
+    }
+
+    const tasks = await this.tasksService.findAll({
+      assignee: agentId,
+      page: 1,
+      pageSize: 100,
+    });
+
+    const taskList = tasks.tasks;
+
+    return {
+      agent: {
+        id: user.id,
+        username: user.username,
+        displayName: user.displayName,
+        role: user.role,
+        isAvailable: user.isAvailable,
+        maxTasks: user.maxTasks || 5,
+      },
+      tasks: {
+        total: taskList.length,
+        pending: taskList.filter(t => t.status === 'pending').length,
+        inProgress: taskList.filter(t => t.status === 'in_progress').length,
+        completed: taskList.filter(t => t.status === 'completed').length,
+      },
+      status: user.isAvailable && user.currentTasks < (user.maxTasks || 5) ? 'available' : 'busy',
+      canAcceptMore: user.isAvailable && user.currentTasks < (user.maxTasks || 5),
+      remainingCapacity: (user.maxTasks || 5) - user.currentTasks,
+    };
   }
 }
