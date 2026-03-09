@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  username      String    @unique @db.VarChar(50)
+  email         String    @unique @db.VarChar(100)
+  passwordHash  String    @db.VarChar(255)
+  role          String    @db.VarChar(20) // manager/designer/developer/qa
+  displayName   String?   @db.VarChar(100)
+  avatarUrl     String?   @db.VarChar(255)
+  isAvailable   Boolean   @default(true)
+  currentTasks  Int       @default(0)
+  maxTasks      Int       @default(5)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  createdTasks     Task[]          @relation("TaskCreator")
+  assignedTasks    Task[]          @relation("TaskAssignee")
+  taskHistories    TaskHistory[]
+  attachments      Attachment[]
+  comments         Comment[]
+  agentStatus      AgentStatus?
+
+  @@index([role])
+  @@index([isAvailable])
+}
+
+model Task {
+  id            Int       @id @default(autoincrement())
+  title         String    @db.VarChar(200)
+  description   String?   @db.Text
+  taskType      String    @db.VarChar(50) // design/development/qa
+  priority      String    @default("medium") @db.VarChar(20) // low/medium/high/urgent
+  status        String    @default("pending") @db.VarChar(20) // pending/in_progress/review/completed/cancelled
+  createdBy     Int
+  assignedTo    Int?
+  parentTaskId  Int?
+  dueDate       DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  creator        User          @relation("TaskCreator", fields: [createdBy], references: [id])
+  assignee       User?         @relation("TaskAssignee", fields: [assignedTo], references: [id])
+  parentTask     Task?         @relation("TaskHierarchy", fields: [parentTaskId], references: [id])
+  childTasks     Task[]        @relation("TaskHierarchy")
+  taskHistories  TaskHistory[]
+  attachments    Attachment[]
+  comments       Comment[]
+
+  @@index([status])
+  @@index([assignedTo])
+  @@index([taskType])
+  @@index([priority])
+  @@index([createdBy])
+}
+
+model TaskHistory {
+  id        Int      @id @default(autoincrement())
+  taskId    Int
+  userId    Int
+  action    String   @db.VarChar(50) // created/assigned/status_changed/commented/completed
+  oldValue  String?  @db.VarChar(255)
+  newValue  String?  @db.VarChar(255)
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+
+  // Relations
+  task Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User   @relation(fields: [userId], references: [id])
+
+  @@index([taskId])
+  @@index([userId])
+}
+
+model Attachment {
+  id        Int      @id @default(autoincrement())
+  taskId    Int
+  fileName  String   @db.VarChar(255)
+  filePath  String   @db.VarChar(500)
+  fileSize  Int?
+  mimeType  String?  @db.VarChar(100)
+  uploadedBy Int
+  createdAt DateTime @default(now())
+
+  // Relations
+  task Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User   @relation(fields: [uploadedBy], references: [id])
+
+  @@index([taskId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  taskId    Int
+  userId    Int
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  task Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User   @relation(fields: [userId], references: [id])
+
+  @@index([taskId])
+  @@index([userId])
+}
+
+model AgentStatus {
+  id               Int      @id @default(autoincrement())
+  userId           Int      @unique
+  status           String   @default("available") @db.VarChar(20) // available/busy/offline
+  currentTaskCount Int      @default(0)
+  lastActive       DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+}
