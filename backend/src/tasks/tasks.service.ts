@@ -313,7 +313,11 @@ export class TasksService {
       where: { id: userId },
     });
 
-    const newTaskCount = user.currentTasks - 1;
+    if (!user) {
+      throw new ForbiddenException('User not found');
+    }
+
+    const newTaskCount = Math.max(0, user.currentTasks - 1);
     await this.prisma.agentStatus.update({
       where: { userId },
       data: {

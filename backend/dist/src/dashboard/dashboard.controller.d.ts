@@ -33,19 +33,19 @@ export declare class DashboardController {
             displayName: string | null;
         } | null;
     } & {
-        status: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        createdBy: number;
         assignedTo: number | null;
-        parentTaskId: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
+        createdBy: number;
+        parentTaskId: number | null;
     })[]>;
     getStats(req: any): Promise<{
         completed: number;

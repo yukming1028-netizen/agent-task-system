@@ -238,6 +238,139 @@ let TasksService = class TasksService {
         });
         return updatedTask;
     }
+    async completeTask(taskId, userId) {
+        const task = await this.findOne(taskId);
+        if (task.assignedTo !== userId) {
+            throw new common_1.ForbiddenException('You can only complete tasks assigned to you');
+        }
+        const updatedTask = await this.prisma.task.update({
+            where: { id: taskId },
+            data: {
+                status: 'completed',
+                completedAt: new Date(),
+            },
+            include: {
+                creator: {
+                    select: { id: true, username: true, displayName: true },
+                },
+                assignee: {
+                    select: { id: true, username: true, displayName: true },
+                },
+            },
+        });
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: { currentTasks: { decrement: 1 } },
+        });
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+        });
+        if (!user) {
+            throw new common_1.ForbiddenException('User not found');
+        }
+        const newTaskCount = Math.max(0, user.currentTasks - 1);
+        await this.prisma.agentStatus.update({
+            where: { userId },
+            data: {
+                currentTaskCount: newTaskCount,
+                status: newTaskCount < user.maxTasks ? 'available' : 'busy',
+                lastActive: new Date(),
+            },
+        });
+        await this.prisma.taskHistory.create({
+            data: {
+                taskId,
+                userId,
+                action: 'completed',
+                newValue: 'completed',
+                comment: 'Task completed',
+            },
+        });
+        let nextTask = null;
+        if (task.taskType === 'design') {
+            nextTask = await this.createChildTask(taskId, 'development', userId);
+        }
+        else if (task.taskType === 'development') {
+            nextTask = await this.createChildTask(taskId, 'qa', userId);
+        }
+        return {
+            task: updatedTask,
+            nextTask,
+        };
+    }
+    async createChildTask(parentTaskId, taskType, userId) {
+        const parentTask = await this.prisma.task.findUnique({
+            where: { id: parentTaskId },
+        });
+        if (!parentTask) {
+            return null;
+        }
+        const taskTypeTitles = {
+            development: 'Dev',
+            qa: 'QA',
+        };
+        const roleForTaskType = {
+            development: 'developer',
+            qa: 'qa',
+        };
+        const availableUsers = await this.prisma.user.findMany({
+            where: {
+                role: roleForTaskType[taskType],
+                isAvailable: true,
+                currentTasks: { lt: 5 },
+            },
+            orderBy: {
+                currentTasks: 'asc',
+            },
+            take: 1,
+        });
+        const assignedTo = availableUsers.length > 0 ? availableUsers[0].id : null;
+        const childTask = await this.prisma.task.create({
+            data: {
+                title: `${taskTypeTitles[taskType]}: ${parentTask.title}`,
+                description: `Auto-created from ${parentTask.taskType} task: ${parentTask.description}`,
+                taskType,
+                priority: parentTask.priority,
+                status: assignedTo ? 'in_progress' : 'pending',
+                createdBy: userId,
+                assignedTo,
+                parentTaskId,
+                dueDate: parentTask.dueDate,
+            },
+            include: {
+                creator: {
+                    select: { id: true, username: true, displayName: true },
+                },
+                assignee: {
+                    select: { id: true, username: true, displayName: true },
+                },
+            },
+        });
+        if (assignedTo) {
+            await this.prisma.user.update({
+                where: { id: assignedTo },
+                data: { currentTasks: { increment: 1 } },
+            });
+            await this.prisma.agentStatus.update({
+                where: { userId: assignedTo },
+                data: {
+                    currentTaskCount: { increment: 1 },
+                    status: 'busy',
+                    lastActive: new Date(),
+                },
+            });
+        }
+        await this.prisma.taskHistory.create({
+            data: {
+                taskId: childTask.id,
+                userId,
+                action: 'created',
+                newValue: childTask.status,
+                comment: `Auto-created from ${parentTask.taskType} completion`,
+            },
+        });
+        return childTask;
+    }
 };
 exports.TasksService = TasksService;
 exports.TasksService = TasksService = __decorate([

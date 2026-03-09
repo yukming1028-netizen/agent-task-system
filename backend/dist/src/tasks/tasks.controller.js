@@ -53,6 +53,9 @@ let TasksController = class TasksController {
     updateStatus(id, status, req) {
         return this.tasksService.update(id, { status }, req.user.userId);
     }
+    completeTask(id, req) {
+        return this.tasksService.completeTask(id, req.user.userId);
+    }
 };
 exports.TasksController = TasksController;
 __decorate([
@@ -124,6 +127,14 @@ __decorate([
     __metadata("design:paramtypes", [Number, String, Object]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "updateStatus", null);
+__decorate([
+    (0, common_1.Post)(':id/complete'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "completeTask", null);
 exports.TasksController = TasksController = __decorate([
     (0, swagger_1.ApiTags)('Tasks'),
     (0, swagger_1.ApiBearerAuth)(),

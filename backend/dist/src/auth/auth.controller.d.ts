@@ -27,13 +27,14 @@ export declare class AuthController {
     }>;
     getProfile(req: any): Promise<{
         agentStatus: {
-            updatedAt: Date;
             id: number;
+            updatedAt: Date;
             userId: number;
             status: string;
             currentTaskCount: number;
             lastActive: Date;
         } | null;
+        id: number;
         username: string;
         email: string;
         role: string;
@@ -44,6 +45,5 @@ export declare class AuthController {
         maxTasks: number;
         createdAt: Date;
         updatedAt: Date;
-        id: number;
     }>;
 }

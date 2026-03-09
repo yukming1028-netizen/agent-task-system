@@ -15,18 +15,18 @@ export declare class TasksController {
             displayName: string | null;
         } | null;
     } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        status: string;
+        assignedTo: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
         createdBy: number;
-        assignedTo: number | null;
         parentTaskId: number | null;
     }>;
     findAll(status?: string, taskType?: string, assignee?: string, createdBy?: string, page?: string, pageSize?: string): Promise<{
@@ -42,18 +42,18 @@ export declare class TasksController {
                 displayName: string | null;
             } | null;
         } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
             title: string;
             description: string | null;
             taskType: string;
             priority: string;
-            status: string;
+            assignedTo: number | null;
             dueDate: Date | null;
             completedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
             createdBy: number;
-            assignedTo: number | null;
             parentTaskId: number | null;
         })[];
         total: number;
@@ -62,18 +62,6 @@ export declare class TasksController {
         totalPages: number;
     }>;
     findOne(id: number): Promise<{
-        creator: {
-            id: number;
-            username: string;
-            role: string;
-            displayName: string | null;
-        };
-        assignee: {
-            id: number;
-            username: string;
-            role: string;
-            displayName: string | null;
-        } | null;
         taskHistories: ({
             user: {
                 id: number;
@@ -81,18 +69,18 @@ export declare class TasksController {
                 displayName: string | null;
             };
         } & {
-            createdAt: Date;
             id: number;
-            taskId: number;
+            createdAt: Date;
             userId: number;
+            comment: string | null;
             action: string;
             oldValue: string | null;
             newValue: string | null;
-            comment: string | null;
+            taskId: number;
         })[];
         attachments: {
-            createdAt: Date;
             id: number;
+            createdAt: Date;
             taskId: number;
             fileName: string;
             filePath: string;
@@ -107,26 +95,38 @@ export declare class TasksController {
                 displayName: string | null;
             };
         } & {
+            id: number;
             createdAt: Date;
             updatedAt: Date;
-            id: number;
-            taskId: number;
             userId: number;
+            taskId: number;
             content: string;
         })[];
+        creator: {
+            id: number;
+            username: string;
+            role: string;
+            displayName: string | null;
+        };
+        assignee: {
+            id: number;
+            username: string;
+            role: string;
+            displayName: string | null;
+        } | null;
     } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        status: string;
+        assignedTo: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
         createdBy: number;
-        assignedTo: number | null;
         parentTaskId: number | null;
     }>;
     update(id: number, updateTaskDto: UpdateTaskDto, req: any): Promise<{
@@ -141,18 +141,18 @@ export declare class TasksController {
             displayName: string | null;
         } | null;
     } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        status: string;
+        assignedTo: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
         createdBy: number;
-        assignedTo: number | null;
         parentTaskId: number | null;
     }>;
     remove(id: number, req: any): Promise<{
@@ -171,18 +171,18 @@ export declare class TasksController {
             displayName: string | null;
         } | null;
     } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        status: string;
+        assignedTo: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
         createdBy: number;
-        assignedTo: number | null;
         parentTaskId: number | null;
     }>;
     submitForReview(id: number, req: any): Promise<{
@@ -197,18 +197,18 @@ export declare class TasksController {
             displayName: string | null;
         } | null;
     } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        status: string;
+        assignedTo: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
         createdBy: number;
-        assignedTo: number | null;
         parentTaskId: number | null;
     }>;
     updateStatus(id: number, status: string, req: any): Promise<{
@@ -223,18 +223,72 @@ export declare class TasksController {
             displayName: string | null;
         } | null;
     } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        status: string;
+        assignedTo: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
         createdBy: number;
-        assignedTo: number | null;
         parentTaskId: number | null;
+    }>;
+    completeTask(id: number, req: any): Promise<{
+        task: {
+            creator: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            };
+            assignee: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            } | null;
+        } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
+            title: string;
+            description: string | null;
+            taskType: string;
+            priority: string;
+            assignedTo: number | null;
+            dueDate: Date | null;
+            completedAt: Date | null;
+            createdBy: number;
+            parentTaskId: number | null;
+        };
+        nextTask: ({
+            creator: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            };
+            assignee: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            } | null;
+        } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
+            title: string;
+            description: string | null;
+            taskType: string;
+            priority: string;
+            assignedTo: number | null;
+            dueDate: Date | null;
+            completedAt: Date | null;
+            createdBy: number;
+            parentTaskId: number | null;
+        }) | null;
     }>;
 }

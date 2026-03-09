@@ -15,18 +15,18 @@ export declare class TasksService {
             displayName: string | null;
         } | null;
     } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        status: string;
+        assignedTo: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
         createdBy: number;
-        assignedTo: number | null;
         parentTaskId: number | null;
     }>;
     findAll(filters: {
@@ -49,18 +49,18 @@ export declare class TasksService {
                 displayName: string | null;
             } | null;
         } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
             title: string;
             description: string | null;
             taskType: string;
             priority: string;
-            status: string;
+            assignedTo: number | null;
             dueDate: Date | null;
             completedAt: Date | null;
-            createdAt: Date;
-            updatedAt: Date;
-            id: number;
             createdBy: number;
-            assignedTo: number | null;
             parentTaskId: number | null;
         })[];
         total: number;
@@ -69,18 +69,6 @@ export declare class TasksService {
         totalPages: number;
     }>;
     findOne(id: number): Promise<{
-        creator: {
-            id: number;
-            username: string;
-            role: string;
-            displayName: string | null;
-        };
-        assignee: {
-            id: number;
-            username: string;
-            role: string;
-            displayName: string | null;
-        } | null;
         taskHistories: ({
             user: {
                 id: number;
@@ -88,18 +76,18 @@ export declare class TasksService {
                 displayName: string | null;
             };
         } & {
-            createdAt: Date;
             id: number;
-            taskId: number;
+            createdAt: Date;
             userId: number;
+            comment: string | null;
             action: string;
             oldValue: string | null;
             newValue: string | null;
-            comment: string | null;
+            taskId: number;
         })[];
         attachments: {
-            createdAt: Date;
             id: number;
+            createdAt: Date;
             taskId: number;
             fileName: string;
             filePath: string;
@@ -114,26 +102,38 @@ export declare class TasksService {
                 displayName: string | null;
             };
         } & {
+            id: number;
             createdAt: Date;
             updatedAt: Date;
-            id: number;
-            taskId: number;
             userId: number;
+            taskId: number;
             content: string;
         })[];
+        creator: {
+            id: number;
+            username: string;
+            role: string;
+            displayName: string | null;
+        };
+        assignee: {
+            id: number;
+            username: string;
+            role: string;
+            displayName: string | null;
+        } | null;
     } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        status: string;
+        assignedTo: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
         createdBy: number;
-        assignedTo: number | null;
         parentTaskId: number | null;
     }>;
     update(id: number, updateTaskDto: UpdateTaskDto, userId: number): Promise<{
@@ -148,18 +148,18 @@ export declare class TasksService {
             displayName: string | null;
         } | null;
     } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        status: string;
+        assignedTo: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
         createdBy: number;
-        assignedTo: number | null;
         parentTaskId: number | null;
     }>;
     remove(id: number, userId: number): Promise<{
@@ -178,18 +178,18 @@ export declare class TasksService {
             displayName: string | null;
         } | null;
     } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        status: string;
+        assignedTo: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
         createdBy: number;
-        assignedTo: number | null;
         parentTaskId: number | null;
     }>;
     submitForReview(taskId: number, userId: number): Promise<{
@@ -204,18 +204,73 @@ export declare class TasksService {
             displayName: string | null;
         } | null;
     } & {
+        id: number;
+        createdAt: Date;
+        updatedAt: Date;
+        status: string;
         title: string;
         description: string | null;
         taskType: string;
         priority: string;
-        status: string;
+        assignedTo: number | null;
         dueDate: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
         createdBy: number;
-        assignedTo: number | null;
         parentTaskId: number | null;
     }>;
+    completeTask(taskId: number, userId: number): Promise<{
+        task: {
+            creator: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            };
+            assignee: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            } | null;
+        } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
+            title: string;
+            description: string | null;
+            taskType: string;
+            priority: string;
+            assignedTo: number | null;
+            dueDate: Date | null;
+            completedAt: Date | null;
+            createdBy: number;
+            parentTaskId: number | null;
+        };
+        nextTask: ({
+            creator: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            };
+            assignee: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            } | null;
+        } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
+            title: string;
+            description: string | null;
+            taskType: string;
+            priority: string;
+            assignedTo: number | null;
+            dueDate: Date | null;
+            completedAt: Date | null;
+            createdBy: number;
+            parentTaskId: number | null;
+        }) | null;
+    }>;
+    private createChildTask;
 }
