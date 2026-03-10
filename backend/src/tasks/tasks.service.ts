@@ -509,4 +509,74 @@ export class TasksService {
 
     return childTask;
   }
+
+  // Attachment methods
+  async getAttachments(taskId: number) {
+    return this.prisma.attachment.findMany({
+      where: { taskId },
+      include: {
+        user: {
+          select: { id: true, username: true, displayName: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async createAttachment(
+    taskId: number,
+    fileName: string,
+    filePath: string,
+    fileSize: number,
+    mimeType: string,
+    userId: number,
+  ) {
+    // Verify task exists
+    await this.prisma.task.findUniqueOrThrow({
+      where: { id: taskId },
+    });
+
+    const attachment = await this.prisma.attachment.create({
+      data: {
+        taskId,
+        fileName,
+        filePath,
+        fileSize,
+        mimeType,
+        uploadedBy: userId,
+      },
+      include: {
+        user: {
+          select: { id: true, username: true, displayName: true },
+        },
+      },
+    });
+
+    return attachment;
+  }
+
+  async deleteAttachment(attachmentId: number, userId: number) {
+    const attachment = await this.prisma.attachment.findUnique({
+      where: { id: attachmentId },
+    });
+
+    if (!attachment) {
+      throw new NotFoundException('Attachment not found');
+    }
+
+    // Only uploader or task creator can delete
+    const task = await this.prisma.task.findUnique({
+      where: { id: attachment.taskId },
+    });
+
+    if (attachment.uploadedBy !== userId && task?.createdBy !== userId) {
+      throw new ForbiddenException('Not authorized to delete this attachment');
+    }
+
+    await this.prisma.attachment.delete({
+      where: { id: attachmentId },
+    });
+
+    return { success: true, message: 'Attachment deleted' };
+  }
 }

@@ -14,6 +14,7 @@ const tasks_module_1 = require("./tasks/tasks.module");
 const users_module_1 = require("./users/users.module");
 const dashboard_module_1 = require("./dashboard/dashboard.module");
 const workflow_module_1 = require("./workflow/workflow.module");
+const attachments_module_1 = require("./attachments/attachments.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,6 +30,7 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             dashboard_module_1.DashboardModule,
             workflow_module_1.WorkflowModule,
+            attachments_module_1.AttachmentsModule,
         ],
     })
 ], AppModule);

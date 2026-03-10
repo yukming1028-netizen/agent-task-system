@@ -116,4 +116,14 @@ export class TasksController {
       pageSize: pageSize ? parseInt(pageSize, 10) : 20,
     });
   }
+
+  @Get(':id/attachments')
+  getAttachments(@Param('id', ParseIntPipe) id: number) {
+    return this.tasksService.getAttachments(id);
+  }
+
+  @Delete('attachments/:id')
+  deleteAttachment(@Param('id', ParseIntPipe) id: number, @Request() req: any) {
+    return this.tasksService.deleteAttachment(id, req.user.userId);
+  }
 }

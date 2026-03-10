@@ -323,4 +323,24 @@ export declare class TasksController {
         pageSize: number;
         totalPages: number;
     }>;
+    getAttachments(id: number): Promise<({
+        user: {
+            id: number;
+            username: string;
+            displayName: string | null;
+        };
+    } & {
+        id: number;
+        createdAt: Date;
+        taskId: number;
+        fileName: string;
+        filePath: string;
+        fileSize: number | null;
+        mimeType: string | null;
+        uploadedBy: number;
+    })[]>;
+    deleteAttachment(id: number, req: any): Promise<{
+        success: boolean;
+        message: string;
+    }>;
 }

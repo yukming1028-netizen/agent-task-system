@@ -316,4 +316,40 @@ export declare class TasksService {
         }) | null;
     }>;
     private createChildTask;
+    getAttachments(taskId: number): Promise<({
+        user: {
+            id: number;
+            username: string;
+            displayName: string | null;
+        };
+    } & {
+        id: number;
+        createdAt: Date;
+        taskId: number;
+        fileName: string;
+        filePath: string;
+        fileSize: number | null;
+        mimeType: string | null;
+        uploadedBy: number;
+    })[]>;
+    createAttachment(taskId: number, fileName: string, filePath: string, fileSize: number, mimeType: string, userId: number): Promise<{
+        user: {
+            id: number;
+            username: string;
+            displayName: string | null;
+        };
+    } & {
+        id: number;
+        createdAt: Date;
+        taskId: number;
+        fileName: string;
+        filePath: string;
+        fileSize: number | null;
+        mimeType: string | null;
+        uploadedBy: number;
+    }>;
+    deleteAttachment(attachmentId: number, userId: number): Promise<{
+        success: boolean;
+        message: string;
+    }>;
 }

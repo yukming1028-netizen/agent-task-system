@@ -70,6 +70,12 @@ let TasksController = class TasksController {
             pageSize: pageSize ? parseInt(pageSize, 10) : 20,
         });
     }
+    getAttachments(id) {
+        return this.tasksService.getAttachments(id);
+    }
+    deleteAttachment(id, req) {
+        return this.tasksService.deleteAttachment(id, req.user.userId);
+    }
 };
 exports.TasksController = TasksController;
 __decorate([
@@ -165,6 +171,21 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String, String, String, String, String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "search", null);
+__decorate([
+    (0, common_1.Get)(':id/attachments'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "getAttachments", null);
+__decorate([
+    (0, common_1.Delete)('attachments/:id'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "deleteAttachment", null);
 exports.TasksController = TasksController = __decorate([
     (0, swagger_1.ApiTags)('Tasks'),
     (0, swagger_1.ApiBearerAuth)(),

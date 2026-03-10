@@ -5,6 +5,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { UsersModule } from './users/users.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { WorkflowModule } from './workflow/workflow.module';
+import { AttachmentsModule } from './attachments/attachments.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { WorkflowModule } from './workflow/workflow.module';
     UsersModule,
     DashboardModule,
     WorkflowModule,
+    AttachmentsModule,
   ],
 })
 export class AppModule {}
