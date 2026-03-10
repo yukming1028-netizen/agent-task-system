@@ -37,6 +37,22 @@ export const taskService = {
     return response.data;
   },
 
+  search: async (params?: {
+    keyword?: string;
+    status?: string;
+    taskType?: string;
+    priority?: string;
+    assignee?: number;
+    createdBy?: number;
+    dateFrom?: string;
+    dateTo?: string;
+    page?: number;
+    pageSize?: number;
+  }) => {
+    const response = await api.get('/tasks/search', { params });
+    return response.data;
+  },
+
   getOne: async (id: number) => {
     const response = await api.get(`/tasks/${id}`);
     return response.data;

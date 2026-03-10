@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Layout, Menu, Card, Row, Col, Statistic, Table, Button, Modal, Form, Input, Select, DatePicker, Tag, Space } from 'antd';
-import { PlusOutlined, DashboardOutlined, TeamOutlined, TaskOutlined } from '@ant-design/icons';
+import { PlusOutlined, DashboardOutlined, TeamOutlined, TaskOutlined, SearchOutlined } from '@ant-design/icons';
 import { useAuthStore } from '../store/authStore';
 import { dashboardService } from '../services/dashboardService';
 import { taskService } from '../services/taskService';
@@ -121,6 +121,7 @@ export default function ManagerDashboard() {
         <Menu mode="inline" defaultSelectedKeys={['dashboard']}>
           <Menu.Item key="dashboard" icon={<DashboardOutlined />}>Dashboard</Menu.Item>
           <Menu.Item key="tasks" icon={<TaskOutlined />}>Tasks</Menu.Item>
+          <Menu.Item key="search" icon={<SearchOutlined />} onClick={() => navigate('/search')}>Search</Menu.Item>
           <Menu.Item key="agents" icon={<TeamOutlined />}>Agents</Menu.Item>
         </Menu>
       </Sider>

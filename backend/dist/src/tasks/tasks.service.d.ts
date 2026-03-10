@@ -68,6 +68,49 @@ export declare class TasksService {
         pageSize: number;
         totalPages: number;
     }>;
+    search(searchParams: {
+        keyword?: string;
+        status?: string;
+        taskType?: string;
+        priority?: string;
+        assignee?: number;
+        createdBy?: number;
+        dateFrom?: string;
+        dateTo?: string;
+        page?: number;
+        pageSize?: number;
+    }): Promise<{
+        tasks: ({
+            creator: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            };
+            assignee: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            } | null;
+        } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
+            title: string;
+            description: string | null;
+            taskType: string;
+            priority: string;
+            assignedTo: number | null;
+            dueDate: Date | null;
+            completedAt: Date | null;
+            createdBy: number;
+            parentTaskId: number | null;
+        })[];
+        total: number;
+        page: number;
+        pageSize: number;
+        totalPages: number;
+    }>;
     findOne(id: number): Promise<{
         taskHistories: ({
             user: {

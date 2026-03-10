@@ -291,4 +291,36 @@ export declare class TasksController {
             parentTaskId: number | null;
         }) | null;
     }>;
+    search(keyword?: string, status?: string, taskType?: string, priority?: string, assignee?: string, createdBy?: string, dateFrom?: string, dateTo?: string, page?: string, pageSize?: string): Promise<{
+        tasks: ({
+            creator: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            };
+            assignee: {
+                id: number;
+                username: string;
+                displayName: string | null;
+            } | null;
+        } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            status: string;
+            title: string;
+            description: string | null;
+            taskType: string;
+            priority: string;
+            assignedTo: number | null;
+            dueDate: Date | null;
+            completedAt: Date | null;
+            createdBy: number;
+            parentTaskId: number | null;
+        })[];
+        total: number;
+        page: number;
+        pageSize: number;
+        totalPages: number;
+    }>;
 }

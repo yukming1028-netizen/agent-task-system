@@ -79,6 +79,74 @@ export class TasksService {
     };
   }
 
+  async search(searchParams: {
+    keyword?: string;
+    status?: string;
+    taskType?: string;
+    priority?: string;
+    assignee?: number;
+    createdBy?: number;
+    dateFrom?: string;
+    dateTo?: string;
+    page?: number;
+    pageSize?: number;
+  }) {
+    const {
+      page = 1,
+      pageSize = 20,
+      keyword,
+      dateFrom,
+      dateTo,
+      ...filters
+    } = searchParams;
+
+    const skip = (page - 1) * pageSize;
+
+    // Build where clause
+    const where: any = { ...filters };
+
+    // Keyword search (title and description)
+    if (keyword) {
+      where.OR = [
+        { title: { contains: keyword, mode: 'insensitive' } },
+        { description: { contains: keyword, mode: 'insensitive' } },
+      ];
+    }
+
+    // Date range filter
+    if (dateFrom || dateTo) {
+      where.createdAt = {};
+      if (dateFrom) where.createdAt.gte = new Date(dateFrom);
+      if (dateTo) where.createdAt.lte = new Date(dateTo);
+    }
+
+    const [tasks, total] = await Promise.all([
+      this.prisma.task.findMany({
+        where,
+        include: {
+          creator: {
+            select: { id: true, username: true, displayName: true },
+          },
+          assignee: {
+            select: { id: true, username: true, displayName: true },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: pageSize,
+      }),
+      this.prisma.task.count({ where }),
+    ]);
+
+    return {
+      tasks,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
+  }
+
   async findOne(id: number) {
     const task = await this.prisma.task.findUnique({
       where: { id },

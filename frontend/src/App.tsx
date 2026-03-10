@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import ManagerDashboard from './pages/ManagerDashboard';
 import AgentDashboard from './pages/AgentDashboard';
 import TaskDetail from './pages/TaskDetail';
+import SearchPage from './pages/SearchPage';
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -32,6 +33,10 @@ function App() {
         <Route
           path="/tasks/:id"
           element={isAuthenticated ? <TaskDetail /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/search"
+          element={isAuthenticated ? <SearchPage /> : <Navigate to="/login" />}
         />
         <Route path="/" element={<Navigate to="/dashboard" />} />
       </Routes>

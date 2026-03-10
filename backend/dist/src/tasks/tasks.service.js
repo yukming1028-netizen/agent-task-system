@@ -75,6 +75,48 @@ let TasksService = class TasksService {
             totalPages: Math.ceil(total / pageSize),
         };
     }
+    async search(searchParams) {
+        const { page = 1, pageSize = 20, keyword, dateFrom, dateTo, ...filters } = searchParams;
+        const skip = (page - 1) * pageSize;
+        const where = { ...filters };
+        if (keyword) {
+            where.OR = [
+                { title: { contains: keyword, mode: 'insensitive' } },
+                { description: { contains: keyword, mode: 'insensitive' } },
+            ];
+        }
+        if (dateFrom || dateTo) {
+            where.createdAt = {};
+            if (dateFrom)
+                where.createdAt.gte = new Date(dateFrom);
+            if (dateTo)
+                where.createdAt.lte = new Date(dateTo);
+        }
+        const [tasks, total] = await Promise.all([
+            this.prisma.task.findMany({
+                where,
+                include: {
+                    creator: {
+                        select: { id: true, username: true, displayName: true },
+                    },
+                    assignee: {
+                        select: { id: true, username: true, displayName: true },
+                    },
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: pageSize,
+            }),
+            this.prisma.task.count({ where }),
+        ]);
+        return {
+            tasks,
+            total,
+            page,
+            pageSize,
+            totalPages: Math.ceil(total / pageSize),
+        };
+    }
     async findOne(id) {
         const task = await this.prisma.task.findUnique({
             where: { id },

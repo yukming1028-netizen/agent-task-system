@@ -89,4 +89,31 @@ export class TasksController {
   completeTask(@Param('id', ParseIntPipe) id: number, @Request() req: any) {
     return this.tasksService.completeTask(id, req.user.userId);
   }
+
+  @Get('search')
+  search(
+    @Query('keyword') keyword?: string,
+    @Query('status') status?: string,
+    @Query('taskType') taskType?: string,
+    @Query('priority') priority?: string,
+    @Query('assignee') assignee?: string,
+    @Query('createdBy') createdBy?: string,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+  ) {
+    return this.tasksService.search({
+      keyword,
+      status,
+      taskType,
+      priority,
+      assignee: assignee ? parseInt(assignee, 10) : undefined,
+      createdBy: createdBy ? parseInt(createdBy, 10) : undefined,
+      dateFrom,
+      dateTo,
+      page: page ? parseInt(page, 10) : 1,
+      pageSize: pageSize ? parseInt(pageSize, 10) : 20,
+    });
+  }
 }

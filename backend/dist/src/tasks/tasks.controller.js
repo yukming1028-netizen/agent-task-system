@@ -56,6 +56,20 @@ let TasksController = class TasksController {
     completeTask(id, req) {
         return this.tasksService.completeTask(id, req.user.userId);
     }
+    search(keyword, status, taskType, priority, assignee, createdBy, dateFrom, dateTo, page, pageSize) {
+        return this.tasksService.search({
+            keyword,
+            status,
+            taskType,
+            priority,
+            assignee: assignee ? parseInt(assignee, 10) : undefined,
+            createdBy: createdBy ? parseInt(createdBy, 10) : undefined,
+            dateFrom,
+            dateTo,
+            page: page ? parseInt(page, 10) : 1,
+            pageSize: pageSize ? parseInt(pageSize, 10) : 20,
+        });
+    }
 };
 exports.TasksController = TasksController;
 __decorate([
@@ -135,6 +149,22 @@ __decorate([
     __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "completeTask", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    __param(0, (0, common_1.Query)('keyword')),
+    __param(1, (0, common_1.Query)('status')),
+    __param(2, (0, common_1.Query)('taskType')),
+    __param(3, (0, common_1.Query)('priority')),
+    __param(4, (0, common_1.Query)('assignee')),
+    __param(5, (0, common_1.Query)('createdBy')),
+    __param(6, (0, common_1.Query)('dateFrom')),
+    __param(7, (0, common_1.Query)('dateTo')),
+    __param(8, (0, common_1.Query)('page')),
+    __param(9, (0, common_1.Query)('pageSize')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, String, String, String, String, String, String, String]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "search", null);
 exports.TasksController = TasksController = __decorate([
     (0, swagger_1.ApiTags)('Tasks'),
     (0, swagger_1.ApiBearerAuth)(),
